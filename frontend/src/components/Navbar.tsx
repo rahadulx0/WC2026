@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { Menu, Trophy } from "lucide-react";
+import { Search, Trophy } from "lucide-react";
 
 const LINKS = [
   { href: "/", label: "Home" },
@@ -20,7 +20,6 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [q, setQ] = useState("");
-  const [open, setOpen] = useState(false);
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -31,15 +30,16 @@ export function Navbar() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80">
-      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 pt-safe backdrop-blur-lg dark:border-slate-800 dark:bg-slate-950/80">
+      <div className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4">
         <Link href="/" className="flex shrink-0 items-center gap-2 font-bold">
           <Trophy className="h-5 w-5 text-pitch-600" />
-          <span className="hidden sm:inline">
+          <span>
             WC<span className="text-pitch-600">2026</span>
           </span>
         </Link>
 
+        {/* Desktop nav */}
         <nav className="hidden flex-1 items-center gap-1 lg:flex">
           {LINKS.map((l) => (
             <Link
@@ -56,7 +56,8 @@ export function Navbar() {
           ))}
         </nav>
 
-        <form onSubmit={submitSearch} className="ml-auto hidden md:block">
+        {/* Desktop search input */}
+        <form onSubmit={submitSearch} className="ml-auto hidden lg:block">
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -65,43 +66,15 @@ export function Navbar() {
           />
         </form>
 
-        <button
-          onClick={() => setOpen((o) => !o)}
-          className="ml-auto rounded-lg border border-slate-200 p-2 md:ml-0 lg:hidden dark:border-slate-700"
-          aria-label="Menu"
+        {/* Mobile search icon */}
+        <Link
+          href="/search"
+          aria-label="Search"
+          className="ml-auto rounded-full p-2 text-slate-500 transition active:scale-90 active:bg-slate-100 lg:hidden dark:text-slate-300 dark:active:bg-slate-800"
         >
-          <Menu className="h-5 w-5" />
-        </button>
+          <Search className="h-5 w-5" />
+        </Link>
       </div>
-
-      {open && (
-        <div className="border-t border-slate-200 px-4 py-2 lg:hidden dark:border-slate-800">
-          <div className="grid grid-cols-2 gap-1">
-            {LINKS.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className={`rounded-lg px-3 py-2 text-sm font-medium ${
-                  isActive(l.href)
-                    ? "bg-slate-100 text-pitch-600 dark:bg-slate-800"
-                    : "text-slate-600 dark:text-slate-300"
-                }`}
-              >
-                {l.label}
-              </Link>
-            ))}
-          </div>
-          <form onSubmit={submitSearch} className="mt-2">
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Search…"
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
-            />
-          </form>
-        </div>
-      )}
     </header>
   );
 }

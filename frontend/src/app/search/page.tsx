@@ -1,9 +1,9 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { Building2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Building2, Search as SearchIcon } from "lucide-react";
 import { Flag } from "@/components/Flag";
 import { MatchCard } from "@/components/MatchCard";
 import { EmptyState, PageHeader, Spinner } from "@/components/ui";
@@ -19,7 +19,21 @@ export default function SearchPage() {
 }
 
 function SearchInner() {
+  const router = useRouter();
   const q = useSearchParams().get("q") ?? "";
+  const [term, setTerm] = useState(q);
+
+  // Keep the URL in sync with the input (debounced) so results + sharing work.
+  useEffect(() => {
+    const id = setTimeout(() => {
+      const next = term.trim();
+      if (next !== q) {
+        router.replace(next ? `/search?q=${encodeURIComponent(next)}` : "/search");
+      }
+    }, 300);
+    return () => clearTimeout(id);
+  }, [term, q, router]);
+
   const { data, isLoading } = useApi<SearchResults>(
     q ? `/search?q=${encodeURIComponent(q)}` : null,
   );
@@ -30,7 +44,18 @@ function SearchInner() {
 
   return (
     <div className="space-y-8">
-      <PageHeader title={`Search`} subtitle={q ? `Results for “${q}”` : "Type a query in the search bar"} />
+      <PageHeader title="Search" subtitle="Find teams, players, matches and venues" />
+
+      <div className="relative">
+        <SearchIcon className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+        <input
+          autoFocus
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+          placeholder="Search teams, players, venues…"
+          className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-base outline-none focus:border-pitch-500 dark:border-slate-700 dark:bg-slate-900"
+        />
+      </div>
 
       {!q ? (
         <EmptyState title="Search teams, players, matches and venues" />

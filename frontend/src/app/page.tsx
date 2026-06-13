@@ -90,23 +90,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Recent results (moved to top) */}
-      {recent.length > 0 && (
-        <section>
-          <SectionTitle
-            action={<Link href="/fixtures" className="text-sm font-medium text-pitch-600">All fixtures →</Link>}
-          >
-            Recent Results
-          </SectionTitle>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {recent.map((m) => (
-              <MatchCard key={m.id} match={m} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Live */}
+      {/* Live (top section) */}
       <section>
         <SectionTitle action={<Link href="/fixtures" className="text-sm font-medium text-pitch-600">View all →</Link>}>
           <span className="flex items-center gap-2">
@@ -126,6 +110,22 @@ export default function HomePage() {
           </div>
         )}
       </section>
+
+      {/* Recent results — compact quarter-size cards */}
+      {recent.length > 0 && (
+        <section>
+          <SectionTitle
+            action={<Link href="/fixtures" className="text-sm font-medium text-pitch-600">All fixtures →</Link>}
+          >
+            Recent Results
+          </SectionTitle>
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
+            {recent.map((m) => (
+              <MatchCard key={m.id} match={m} compact />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Full date-wise schedule */}
       <section>

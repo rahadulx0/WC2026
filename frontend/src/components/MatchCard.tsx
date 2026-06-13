@@ -4,17 +4,43 @@ import type { Match } from "@/lib/types";
 import { formatTime, isLive, shortDate, statusLabel } from "@/lib/format";
 import { Flag } from "./Flag";
 
-export function MatchCard({ match, showVenue = true }: { match: Match; showVenue?: boolean }) {
+export function MatchCard({
+  match,
+  showVenue = true,
+  compact = false,
+}: {
+  match: Match;
+  showVenue?: boolean;
+  compact?: boolean;
+}) {
   const live = isLive(match.status);
   const finished = match.status === "FINISHED";
   const showScore = live || finished;
   const homeWin = finished && (match.score.home ?? 0) > (match.score.away ?? 0);
   const awayWin = finished && (match.score.away ?? 0) > (match.score.home ?? 0);
 
+  // Compact variant — quarter-size result cards (no header/footer chrome).
+  if (compact) {
+    return (
+      <Link
+        href={`/match/${match.id}`}
+        className="card block px-3 py-2.5 transition active:scale-[0.97] hover:border-pitch-300 dark:hover:border-pitch-700"
+      >
+        <div className="space-y-1.5">
+          <TeamRow team={match.homeTeam.code || match.homeTeam.name} flag={match.homeTeam.flag} score={match.score.home} show={showScore} winner={homeWin} dim={awayWin} small />
+          <TeamRow team={match.awayTeam.code || match.awayTeam.name} flag={match.awayTeam.flag} score={match.score.away} show={showScore} winner={awayWin} dim={homeWin} small />
+        </div>
+        <p className="mt-1.5 text-right text-[10px] font-medium text-slate-400">
+          {live ? statusLabel(match.status, match.minute) : finished ? "FT" : `${shortDate(match.utcDate)} · ${formatTime(match.utcDate)}`}
+        </p>
+      </Link>
+    );
+  }
+
   return (
     <Link
       href={`/match/${match.id}`}
-      className="card group relative block px-4 py-3 transition hover:-translate-y-0.5 hover:border-pitch-300 hover:shadow-md dark:hover:border-pitch-700"
+      className="card group relative block px-4 py-3 transition active:scale-[0.99] hover:-translate-y-0.5 hover:border-pitch-300 hover:shadow-md dark:hover:border-pitch-700"
     >
       {/* Header: status / kickoff time */}
       <div className="mb-2.5 flex items-center justify-end text-[11px]">
@@ -59,6 +85,7 @@ function TeamRow({
   show,
   winner,
   dim,
+  small = false,
 }: {
   team: string;
   flag: string;
@@ -66,16 +93,21 @@ function TeamRow({
   show: boolean;
   winner: boolean;
   dim: boolean;
+  small?: boolean;
 }) {
   return (
-    <div className={`flex items-center gap-2.5 ${dim ? "opacity-60" : ""}`}>
-      <Flag flag={flag} size="text-xl" />
-      <span className={`min-w-0 flex-1 truncate text-sm ${winner ? "font-bold" : "font-medium"}`}>
+    <div className={`flex items-center ${small ? "gap-2" : "gap-2.5"} ${dim ? "opacity-60" : ""}`}>
+      <Flag flag={flag} size={small ? "text-base" : "text-xl"} />
+      <span
+        className={`min-w-0 flex-1 truncate ${small ? "text-xs" : "text-sm"} ${
+          winner ? "font-bold" : "font-medium"
+        }`}
+      >
         {team}
       </span>
       {show && (
         <span
-          className={`w-6 text-center text-base tabular-nums ${
+          className={`text-center tabular-nums ${small ? "w-5 text-sm" : "w-6 text-base"} ${
             winner ? "font-extrabold text-pitch-600" : "font-semibold"
           }`}
         >
