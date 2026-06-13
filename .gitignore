@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.next/
+out/
+*.log
+.DS_Store
+
+# keep .env.example, ignore real env files
+.env
+.env.local
