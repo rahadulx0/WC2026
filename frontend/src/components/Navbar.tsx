@@ -7,6 +7,7 @@ import { Search, Trophy } from "lucide-react";
 
 const LINKS = [
   { href: "/", label: "Home" },
+  { href: "/channels", label: "Live TV" },
   { href: "/fixtures", label: "Fixtures" },
   { href: "/standings", label: "Standings" },
   { href: "/bracket", label: "Bracket" },

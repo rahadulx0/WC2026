@@ -12,6 +12,7 @@ import {
   Menu,
   Network,
   Search,
+  Tv,
   User,
   Users,
   X,
@@ -19,12 +20,13 @@ import {
 
 const TABS = [
   { href: "/", label: "Home", icon: Home },
+  { href: "/channels", label: "Live TV", icon: Tv },
   { href: "/fixtures", label: "Fixtures", icon: CalendarDays },
-  { href: "/standings", label: "Standings", icon: ListOrdered },
   { href: "/bracket", label: "Bracket", icon: Network },
 ];
 
 const MORE = [
+  { href: "/standings", label: "Standings", icon: ListOrdered },
   { href: "/teams", label: "Teams", icon: Users },
   { href: "/players", label: "Players", icon: User },
   { href: "/venues", label: "Venues", icon: MapPin },
